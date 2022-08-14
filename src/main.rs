@@ -2,6 +2,8 @@
 
 use eframe::egui;
 use egui_extras::RetainedImage;
+use rand::Rng;
+use std::{fs, io};
 
 fn main() {
     let options = eframe::NativeOptions {
@@ -21,12 +23,21 @@ struct MyApp {
 
 impl Default for MyApp {
     fn default() -> Self {
+        // Select random image from directory
+        let image_directory = "./src/mary";
+        let paths: Vec<Result<fs::DirEntry, io::Error>> =
+            fs::read_dir(image_directory).unwrap().collect();
+        let index = rand::thread_rng().gen_range(0..paths.len()-1);
+        let image_name = if let Some(image) = paths.get(index) {
+            image.as_ref().unwrap().file_name().to_str().unwrap().to_string()
+        } else {
+            unimplemented!()
+        };
+
+        let image_bytes = image_name.as_bytes();
         Self {
-            image: RetainedImage::from_image_bytes(
-                "rust-logo-256x256.png",
-                include_bytes!("rust-logo-256x256.png"),
-            )
-            .unwrap(),
+            image: RetainedImage::from_image_bytes(image_name.clone(), image_bytes)
+                .unwrap(),
         }
     }
 }
