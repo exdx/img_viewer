@@ -34,9 +34,11 @@ impl Default for MyApp {
             unimplemented!()
         };
 
-        let image_bytes = image_name.as_bytes();
+        // let image_name_static: &str = &image_name[..];
+
         Self {
-            image: RetainedImage::from_image_bytes(image_name.clone(), image_bytes)
+            image: RetainedImage::from_image_bytes(image_name.as_str(), 
+            include_bytes!("mary/IMG_2514.PNG"))
                 .unwrap(),
         }
     }
